@@ -19,6 +19,7 @@
             --texto-oscuro: #2c3e50;
             --texto-mutado: #5a6c7d;
             --blanco: #ffffff;
+            --negro-transparente: rgba(0, 0, 0, 0.85);
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 15px rgba(0,0,0,0.08);
             --shadow-lg: 10px 10px 25px rgba(0,0,0,0.12);
@@ -403,6 +404,12 @@
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+            cursor: pointer; /* ✅ Indicador de clic */
+            transition: var(--transition);
+        }
+
+        .producto-img-box img:hover {
+            transform: scale(1.05);
         }
 
         .producto-info {
@@ -481,6 +488,52 @@
 
         .btn-producto-contacto:hover {
             background: var(--verde-oscuro);
+        }
+
+        /* -------------------------- ✅ MODAL PARA IMÁGENES -------------------------- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: var(--negro-transparente);
+            padding: 2rem;
+        }
+
+        .modal-contenido {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: var(--radius);
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+            animation: zoom 0.3s ease;
+        }
+
+        @keyframes zoom {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .cerrar-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: var(--blanco);
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cerrar-modal:hover,
+        .cerrar-modal:focus {
+            color: var(--verde-claro);
+            transform: rotate(90deg);
         }
 
         /* -------------------------- TESTIMONIOS -------------------------- */
@@ -604,7 +657,7 @@
             font-size: 1.1rem;
         }
 
-        /* -------------------------- ✅ RESPONSIVE COMPLETO (OPCIÓN 1 APLICADA) -------------------------- */
+        /* -------------------------- ✅ RESPONSIVE COMPLETO -------------------------- */
         @media (max-width: 992px) {
             .profesional-grid {
                 grid-template-columns: 1fr;
@@ -635,7 +688,6 @@
                 padding: 1.5rem; 
             }
             
-            /* ✅ AQUÍ LA CORRECCIÓN: SE MUESTRA EL TEXTO EN CELULAR */
             .nav-brand {
                 display: block;
                 font-size: 1.1rem;
@@ -646,7 +698,6 @@
                 display: block;
             }
 
-            /* ✅ Menú desplegable en celular */
             nav ul {
                 position: absolute;
                 top: 65px;
@@ -676,6 +727,12 @@
             
             .grid-productos {
                 grid-template-columns: 1fr;
+            }
+
+            .cerrar-modal {
+                top: 10px;
+                right: 20px;
+                font-size: 2rem;
             }
         }
     </style>
@@ -762,7 +819,6 @@
         <div class="section-card">
             <h2 class="titulo-seccion">Elaboración Propia</h2>
             <div class="elaboracion-header">
-                
                 <p style="margin-top: 1rem; color: var(--texto-mutado)">Todos nuestros productos son elaborados artesanalmente bajo estrictas normas de higiene y control de calidad. Seleccionamos materias primas 100% naturales para conservar todas sus propiedades activas y garantizar un producto seguro.</p>
             </div>
             <div class="galeria-instalaciones">
@@ -970,6 +1026,12 @@
 
 </div>
 
+<!-- ✅ MODAL PARA AMPLIAR IMÁGENES -->
+<div id="modalImagen" class="modal">
+    <span class="cerrar-modal">&times;</span>
+    <img class="modal-contenido" id="imagenAmpliada">
+</div>
+
 <!-- REDES FLOTANTES -->
 <div class="redes-sociales">
     <a href="https://wa.me/573208615373?text=Hola,%20me%20interesan%20los%20productos%20de%20Homeovida" target="_blank" class="whatsapp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
@@ -1049,6 +1111,47 @@ document.addEventListener("DOMContentLoaded", ()=>{
             }
         }
         escribir();
+    });
+
+    // ===========================
+    // ✅ FUNCIONALIDAD MODAL DE IMÁGENES
+    // ===========================
+    const modal = document.getElementById("modalImagen");
+    const imagenAmpliada = document.getElementById("imagenAmpliada");
+    const cerrarModal = document.querySelector(".cerrar-modal");
+
+    // Seleccionamos todas las imágenes que se pueden ampliar
+    const imagenesAmpliables = document.querySelectorAll(".diploma, .producto-img-box img");
+
+    imagenesAmpliables.forEach(img => {
+        img.addEventListener("click", () => {
+            modal.style.display = "block";
+            imagenAmpliada.src = img.src;
+            imagenAmpliada.alt = img.alt;
+            document.body.style.overflow = "hidden";
+        });
+    });
+
+    // Cerrar al hacer clic en la X
+    cerrarModal.addEventListener("click", () => {
+        modal.style.display = "none";
+        document.body.style.overflow = "auto";
+    });
+
+    // Cerrar al hacer clic fuera de la imagen
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+    });
+
+    // Cerrar con tecla Escape
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modal.style.display === "block") {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
     });
 });
 </script>
